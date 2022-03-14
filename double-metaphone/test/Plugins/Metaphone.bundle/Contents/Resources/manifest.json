@@ -1,0 +1,11 @@
+{
+    "name": "Metaphone",
+    "id": 20000,
+    "commands": [
+        {
+            "theme": "Double Metaphone",
+            "syntax": "DoubleMetaphone(&T):C",
+            "threadSafe": true
+        }
+    ]
+}
