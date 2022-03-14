@@ -4,9 +4,9 @@
 
 * [jkominek/dmetaphone](https://github.com/jkominek/dmetaphone)
 
-* [jonathanstowe/doublephone](https://github.com/jonathanstowe/doublephone)
+* [jonathanstowe/doublephone](https://github.com/jonathanstowe/doublephone) **NG**: not unicode, processing of Ç and Ñ is Windows-1252/ISO-8869-1
 
-* [slacy/double-metaphone](https://github.com/slacy/double-metaphone)
+* [slacy/double-metaphone](https://github.com/slacy/double-metaphone) 
 
 ```4d
 metaphones:=DoubleMetaphone(word {;mode})
