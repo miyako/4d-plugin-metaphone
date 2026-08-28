@@ -1,2 +1,5 @@
 *.DS_Store
 double-metaphone/build/*
+test/userPreferences.*
+test/Project/DerivedData/*
+build/*
