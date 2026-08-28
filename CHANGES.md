@@ -14,6 +14,10 @@
 - Evaluated the Slavo-Germanic condition once per input instead of repeatedly scanning the entire input from inside the main processing loop. This removes the previous avoidable O(n²) behavior.
 - Replaced ineffective in-string NUL writes used for output limiting with `std::string::resize()`, so the 999-character output limit is actually enforced.
 
+- Replaced the original Unicode characters used inside MacRoman macro identifiers with ASCII-only macro names. This avoids MSVC/source-encoding-dependent diagnostics such as C3872 while preserving the exact byte values used by the algorithm.
+- Kept Unicode characters in comments/documentation only; no algorithmic MacRoman byte values were changed by this portability fix.
+- Used an aligned `std::vector<PA_Unichar>` for UTF-16 output buffers instead of reinterpreting a byte vector as `PA_Unichar *`, avoiding an architecture-dependent alignment assumption.
+
 ## Deliberately unchanged
 
 - The plugin's exposed command remains `DoubleMetaphone(&T):C` and remains marked thread-safe in `manifest.json`.

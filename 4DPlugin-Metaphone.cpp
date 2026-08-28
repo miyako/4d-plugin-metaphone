@@ -38,161 +38,161 @@ void PluginMain(PA_long32 selector, PA_PluginParameters params) {
 
 using namespace std;
 
-#define macroman_Ä 0x80
-#define macroman_Å 0x81
-#define macroman_Ç 0x82
-#define macroman_É 0x83
-#define macroman_Ñ 0x84
-#define macroman_Ö 0x85
-#define macroman_Ü 0x86
-#define macroman_á 0x87
-#define macroman_à 0x88
-#define macroman_â 0x89
-#define macroman_ä 0x8A
-#define macroman_ã 0x8B
-#define macroman_å 0x8C
-#define macroman_ç 0x8D
-#define macroman_é 0x8E
-#define macroman_è 0x8F
-#define macroman_ê 0x90
-#define macroman_ë 0x91
-#define macroman_í 0x92
-#define macroman_ì 0x93
-#define macroman_î 0x94
-#define macroman_ï 0x95
-#define macroman_ñ 0x96
-#define macroman_ó 0x97
-#define macroman_ò 0x98
-#define macroman_ô 0x99
-#define macroman_ö 0x9A
-#define macroman_õ 0x9B
-#define macroman_ú 0x9C
-#define macroman_ù 0x9D
-#define macroman_û 0x9E
-#define macroman_ü 0x9F
-#define macroman_Æ 0xAE
-#define macroman_Ø 0xAF
-#define macroman_æ 0xBE
-#define macroman_ø 0xBF
-#define macroman_À 0xCB
-#define macroman_Ã 0xCC
-#define macroman_Õ 0xCD
-#define macroman_Œ 0xCE
-#define macroman_œ 0xCF
-#define macroman_ÿ 0xD8
-#define macroman_Ÿ 0xD9
-#define macroman_ﬁ 0xDE
-#define macroman_ﬂ 0xDF
-#define macroman_Â 0xE5
-#define macroman_Ê 0xE6
-#define macroman_Á 0xE7
-#define macroman_Ë 0xE8
-#define macroman_È 0xE9
-#define macroman_Í 0xEA
-#define macroman_Î 0xEB
-#define macroman_Ï 0xEC
-#define macroman_Ì 0xED
-#define macroman_Ó 0xEE
-#define macroman_Ô 0xEF
-#define macroman_Ò 0xF1
-#define macroman_Ú 0xF2
-#define macroman_Û 0xF3
-#define macroman_Ù 0xF4
+#define MR_80 0x80
+#define MR_81 0x81
+#define MR_82 0x82
+#define MR_83 0x83
+#define MR_84 0x84
+#define MR_85 0x85
+#define MR_86 0x86
+#define MR_87 0x87
+#define MR_88 0x88
+#define MR_89 0x89
+#define MR_8A 0x8A
+#define MR_8B 0x8B
+#define MR_8C 0x8C
+#define MR_8D 0x8D
+#define MR_8E 0x8E
+#define MR_8F 0x8F
+#define MR_90 0x90
+#define MR_91 0x91
+#define MR_92 0x92
+#define MR_93 0x93
+#define MR_94 0x94
+#define MR_95 0x95
+#define MR_96 0x96
+#define MR_97 0x97
+#define MR_98 0x98
+#define MR_99 0x99
+#define MR_9A 0x9A
+#define MR_9B 0x9B
+#define MR_9C 0x9C
+#define MR_9D 0x9D
+#define MR_9E 0x9E
+#define MR_9F 0x9F
+#define MR_AE 0xAE
+#define MR_AF 0xAF
+#define MR_BE 0xBE
+#define MR_BF 0xBF
+#define MR_CB 0xCB
+#define MR_CC 0xCC
+#define MR_CD 0xCD
+#define MR_CE 0xCE
+#define MR_CF 0xCF
+#define MR_D8 0xD8
+#define MR_D9 0xD9
+#define MR_DE 0xDE
+#define MR_DF 0xDF
+#define MR_E5 0xE5
+#define MR_E6 0xE6
+#define MR_E7 0xE7
+#define MR_E8 0xE8
+#define MR_E9 0xE9
+#define MR_EA 0xEA
+#define MR_EB 0xEB
+#define MR_EC 0xEC
+#define MR_ED 0xED
+#define MR_EE 0xEE
+#define MR_EF 0xEF
+#define MR_F1 0xF1
+#define MR_F2 0xF2
+#define MR_F3 0xF3
+#define MR_F4 0xF4
 
 const unsigned int max_length = 999;
 
 static void MakeUpper(string &s) {
   for (unsigned int i = 0; i < s.length(); i++) {
       switch (s[i]) {
-          case macroman_á:
-              s[i] = macroman_Á;
+          case MR_87:
+              s[i] = MR_E7;
               break;
-          case macroman_à:
-              s[i] = macroman_À;
+          case MR_88:
+              s[i] = MR_CB;
               break;
-          case macroman_â:
-              s[i] = macroman_Â;
+          case MR_89:
+              s[i] = MR_E5;
               break;
-          case macroman_ä:
-              s[i] = macroman_Ä;
+          case MR_8A:
+              s[i] = MR_80;
               break;
-          case macroman_ã:
-              s[i] = macroman_Ã;
+          case MR_8B:
+              s[i] = MR_CC;
               break;
-          case macroman_å:
-              s[i] = macroman_Å;
+          case MR_8C:
+              s[i] = MR_81;
               break;
-          case macroman_é:
-              s[i] = macroman_É;
+          case MR_8E:
+              s[i] = MR_83;
               break;
-          case macroman_è:
-              s[i] = macroman_È;
+          case MR_8F:
+              s[i] = MR_E9;
               break;
-          case macroman_ê:
-              s[i] = macroman_Ê;
+          case MR_90:
+              s[i] = MR_E6;
               break;
-          case macroman_ë:
-              s[i] = macroman_Ë;
+          case MR_91:
+              s[i] = MR_E8;
               break;
-          case macroman_í:
-              s[i] = macroman_Í;
+          case MR_92:
+              s[i] = MR_EA;
               break;
-          case macroman_ì:
-              s[i] = macroman_Ì;
+          case MR_93:
+              s[i] = MR_ED;
               break;
-          case macroman_î:
-              s[i] = macroman_Î;
+          case MR_94:
+              s[i] = MR_EB;
               break;
-          case macroman_ï:
-              s[i] = macroman_Ï;
+          case MR_95:
+              s[i] = MR_EC;
               break;
-          case macroman_ó:
-              s[i] = macroman_Ó;
+          case MR_97:
+              s[i] = MR_EE;
               break;
-          case macroman_ò:
-              s[i] = macroman_Ò;
+          case MR_98:
+              s[i] = MR_F1;
               break;
-          case macroman_ô:
-              s[i] = macroman_Ô;
+          case MR_99:
+              s[i] = MR_EF;
               break;
-          case macroman_ö:
-              s[i] = macroman_Ö;
+          case MR_9A:
+              s[i] = MR_85;
               break;
-          case macroman_õ:
-              s[i] = macroman_Õ;
+          case MR_9B:
+              s[i] = MR_CD;
               break;
-          case macroman_ú:
-              s[i] = macroman_Ú;
+          case MR_9C:
+              s[i] = MR_F2;
               break;
-          case macroman_ù:
-              s[i] = macroman_Ù;
+          case MR_9D:
+              s[i] = MR_F4;
               break;
-          case macroman_û:
-              s[i] = macroman_Û;
+          case MR_9E:
+              s[i] = MR_F3;
               break;
-          case macroman_ü:
-              s[i] = macroman_Ü;
+          case MR_9F:
+              s[i] = MR_86;
               break;
-          case macroman_ç:
-              s[i] = macroman_Ç;
+          case MR_8D:
+              s[i] = MR_82;
               break;
-          case macroman_æ:
-              s[i] = macroman_Æ;
+          case MR_BE:
+              s[i] = MR_AE;
               break;
-          case macroman_ø:
-              s[i] = macroman_Ø;
+          case MR_BF:
+              s[i] = MR_AF;
               break;
-          case macroman_œ:
-              s[i] = macroman_Œ;
+          case MR_CF:
+              s[i] = MR_CE;
               break;
-          case macroman_ÿ:
-              s[i] = macroman_Ÿ;
+          case MR_D8:
+              s[i] = MR_D9;
               break;
-          case macroman_ﬁ:
-              s[i] = macroman_ﬁ;
+          case MR_DE:
+              s[i] = MR_DE;
               break;
-          case macroman_ñ:
-              s[i] = macroman_Ñ;
+          case MR_96:
+              s[i] = MR_84;
               break;
               
           default:
@@ -278,23 +278,25 @@ static void push_back(PA_CollectionRef metaphones, const std::string& str)
     if (!metaphones)
         return;
 
-    const uint32_t len = static_cast<uint32_t>((str.length() + 1) * sizeof(PA_Unichar));
-    std::vector<uint8_t> buf(len, 0);
+    const size_t char_count = str.length() + 1;
+    std::vector<PA_Unichar> buf(char_count, 0);
+    const uint32_t byte_length =
+        static_cast<uint32_t>(char_count * sizeof(PA_Unichar));
 
     PA_ConvertCharsetToCharset(
         (char *)str.c_str(),
-        str.length() * sizeof(char),
+        static_cast<uint32_t>(str.length() * sizeof(char)),
         eVTC_MAC_ROMAN,
         (char *)buf.data(),
-        len,
+        byte_length,
         eVTC_UTF_16
     );
 
     // Guarantee a UTF-16 terminator even if the conversion routine writes no terminator.
-    reinterpret_cast<PA_Unichar *>(buf.data())[len / sizeof(PA_Unichar) - 1] = 0;
+    buf[char_count - 1] = 0;
 
     PA_Variable v = PA_CreateVariable(eVK_Unistring);
-    PA_Unistring value = PA_CreateUnistring(reinterpret_cast<PA_Unichar *>(buf.data()));
+    PA_Unistring value = PA_CreateUnistring(buf.data());
     PA_SetStringVariable(&v, &value);
     PA_SetCollectionElement(metaphones, PA_GetCollectionLength(metaphones), v);
     PA_ClearVariable(&v);
@@ -367,7 +369,7 @@ static void DoubleMetaphoneImplementation(string &str, PA_CollectionRef codes)
         current += 1;
       break;
 
-    case macroman_Ç:
+    case MR_82:
       primary += "S";
       secondary += "S";
       current += 1;
@@ -820,7 +822,7 @@ static void DoubleMetaphoneImplementation(string &str, PA_CollectionRef codes)
       secondary += "N";
       break;
 
-    case macroman_Ñ:
+    case MR_84:
       current += 1;
       primary += "N";
       secondary += "N";
