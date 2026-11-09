@@ -5,6 +5,104 @@
 
 # 4d-plugin-metaphone
 
+## Manual versioning and publication
+
+**Bump version** and **Build** are independent manual Actions. Neither runs on
+pushes, tags, or pull requests. Run **Bump version** on a branch with `patch`,
+`minor`, or `major`; it commits only source version metadata, without building,
+tagging, releasing, or dispatching another workflow. Run **Build** separately:
+it has **zero inputs**, only GitHub's branch selector. Every checkout pins the
+selected `github.sha`; the version and `vX.Y.Z` tag come from that commit's
+validated source, never an entered tag.
+
+### Version authority
+
+The original Bump header, introduced in `bbcbc4a18a131be0341770d4621118c20efbbf67`,
+explicitly coordinates `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` with
+`CFBundleShortVersionString` and an existing `CFBundleVersion`. Its marketing-first
+body failed to implement that contract. The later
+`4cd2f57322e36cf85201bfe677297db5bbf6fccf` commit message explicitly reaffirmed
+coordination; this is not an independent build-number policy.
+
+The source authority is `Metaphone.xcodeproj/project.pbxproj` (six assignments
+of each version key), `Info.plist`, and `English.lproj/InfoPlist.strings`.
+Versions must be consistent, strict `X.Y.Z` without leading zeroes or suffixes.
+Supported `$(MARKETING_VERSION)`, `${MARKETING_VERSION}`,
+`$(CURRENT_PROJECT_VERSION)`, and `${CURRENT_PROJECT_VERSION}` plist references
+are preserved; current-project settings may reference marketing, never themselves.
+An absent optional `CFBundleVersion` stays absent. Duplicate plist/localized keys
+and project assignments, including inline quoted duplicates, fail before writes.
+Bumps preserve source modes, BOM, each individual line ending, references, and
+unrelated bytes.
+
+Migration does **not** increment the existing `1.0.5` source version. It repairs
+only six stale source `CURRENT_PROJECT_VERSION = 1.0.3` assignments and the two
+source localization `1.0.0` tokens to that existing authority. Committed binaries,
+bundles (including copied localization), archives, dependencies, native project
+settings, manifests, and 4D database/catalog counters are not version authorities
+and are not rewritten.
+
+Bump requires a clean selected commit and an unchanged remote branch, then checks
+the new commit is exactly one direct child changing a nonempty metadata-only path
+set. Its mandatory executable pre-push hook checks Git's advertised old SHA,
+exact branch and literal new SHA; zero or multiple updates fail. Hook availability
+is checked initially and immediately before the explicit non-force branch push.
+Both `push.followTags=false` and `--no-follow-tags` prevent unrelated tags following.
+Generated commits include the Copilot App co-author trailer.
+
+### Build and failure recovery
+
+Build retains Windows Release/x64 with the v143/Windows SDK 10.0 overrides and
+macOS Default/arm64+x86_64 with the original **11.0 CI deployment override**.
+It preserves committed bundle resources and dependencies, invalidates only rebuilt
+outputs, requires the exact Windows project output and downloaded filename, and
+checks the rebuilt plist/localization against source (including UTF-16 and compiled
+binary localization). Exact required `arm64` and `x86_64` slices are checked;
+no previously absent no-i386 or dependency-architecture gate is introduced.
+Signing and strict verification remain mandatory. Both notarization commands must
+succeed **and** return JSON `Accepted`, followed by successful DMG stapling.
+
+A repository-wide constant publication concurrency group serializes Build across
+branches without cancellation. Before native work and again after all native,
+signing, notarization and stapling gates, authenticated, paginated API requests check
+all releases, including drafts, and exact remote tag absence. Authentication,
+network, 404, malformed responses, and errors on any page fail closed.
+
+Publication creates a new tag with `POST git/refs` at the selected SHA and verifies
+it remotely. A separate `POST releases` explicitly creates a new public,
+non-prerelease with the original empty body and matching tag/name/target SHA.
+Assets upload only to that newly returned release ID. Existing tags or releases
+are never reused, overwritten, patched, deleted, retried, or rolled back, including
+same-SHA races.
+
+**On failure, any created tag, release, and earlier uploaded assets remain.**
+Stop and inspect the Actions error and remote state manually. A rerun intentionally
+fails if the version's tag or any draft/public release already exists. An authorized
+maintainer must decide how to recover retained partial publication; the workflow
+will not repair it automatically. For a new release, bump source to a new version
+and dispatch Build separately after that decision.
+
+### Offline regression checks and prior art
+
+Run `actionlint .github/workflows/*.yml` and
+`python3 -B -m unittest discover -s .github/tests -v` (Python 3.10+ and PowerShell
+required for the complete suite). Tests use disposable real Git repositories and
+bare origins, mocked API transport, closed-PATH native stubs, and PowerShell
+fixtures. They never perform real builds, signing, notarization, 4D execution,
+or production publication. Run the full suite both live and in a disposable copy
+after a genuine helper-driven bump; fixtures derive the source version.
+
+The implementation was adapted, not path/count/policy-copied, from these exact
+`miyako/4d-plugin-` snapshots:
+
+| Repository suffix | Pinned commit |
+|---|---|
+| native-encoding-detection | `c42ca565857f674bde5ea6ed3435c87375eda4a7` |
+| file-information | `19848973601acfd3a2b5070230fa40cdc7e4edb2` |
+| common-string-algorithm | `2606a68201866ec9fcbb38b51462d79215f504ef` |
+| window-button | `3f14facb9aaaaff0e22eeb8e07531163680c3a8a` |
+| raw-picture-data | `8144537fdc8dcc3d0c053dfe97aff0a8c0c3a6f9` |
+
 The Metaphone plug-in adds **Double Metaphone** phonetic encoding to 4D. It accepts a text value and returns a 4D collection containing the two Double Metaphone codes generated for that value:
 
 1. **Primary code**
