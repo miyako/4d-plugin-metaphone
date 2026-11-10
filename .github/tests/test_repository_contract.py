@@ -71,6 +71,7 @@ class RepositoryContractTests(unittest.TestCase):
             ["git", "-C", str(ROOT), "ls-tree", "-r", "--name-only", BASE], text=True,
         ).splitlines()
         allowed = {*map(str, source.SOURCE_PATHS), "README.md",
+                   "4DPlugin-Metaphone.cpp", "support/4DPlugin-JSON.cpp",
                    ".github/workflows/bump-version.yml", ".github/workflows/release.yml"}
         for name in paths:
             if name in allowed:

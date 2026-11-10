@@ -126,6 +126,69 @@ Double Metaphone is useful when you want to compare words or names by approximat
 - The source limits each returned code to a maximum of 999 characters.
 - For an empty input string, the command returns a collection containing two empty strings.
 
+## Native string ownership maintenance
+
+The ownership audit baseline is `5d625793a808eaa202d6accf7a206161edf68930`.
+Source and bundled resource manifests both declare only `DoubleMetaphone(&T):C`;
+selector 1 calls the synchronous scalar-input/collection-output implementation.
+Neither manifest declares a text array. Inventory includes tracked helpers, not
+just indexed command declarations:
+
+| First-party surface | Native project reachability | Ownership result |
+|---|---|---|
+| `4DPlugin-Metaphone.cpp` | Windows and macOS | Borrowed parameter is converted before return; independent scalar strings are copied into two collection elements. Start temporary variables Undefined before assigning their owning descriptors, avoiding loss of an SDK-created empty string. Preserve collection return ownership. |
+| `Classes/C_TEXT.*` | macOS compiled, no command call site; Windows not compiled | Copies borrowed parameter content into a C++ string; engine content setter updates output. |
+| `Classes/ARRAY_TEXT.*` | Dormant in both projects | Copies borrowed array elements; creates independent strings for accepted array transfers without disposing transferred aliases. Tested for replacement, shrink, final clear and SDK rejection semantics; allocation/resize failure recovery is not certified. |
+| `support/4DPlugin-JSON.*` | Dormant in both projects | Four string setters now start Undefined. String/boolean/number property readers clear owning results after copying, including mismatches. Collection reader clears mismatches but preserves the successful owning-reference handoff. Stringify copies output before clearing its returned variable. |
+| `Classes/C_BLOB.*`, `Classes/C_LONGINT.*`, `Classes/C_TYPES.h` | Dormant helpers/types | No additional `PA_Unistring` owner/transfer path. No `CPicture` or `C_POINTER` wrapper is present. Non-string resource behavior is outside this audit. |
+
+Third-party jsoncpp headers and static libraries, archived distributions and
+prebuilt native binaries are not modified or certified. Compiled/bundled
+metadata agreement does not prove that prebuilt binaries match this source.
+
+The unchanged bundled SDK's header says `rev: v14`, **not** a verified upstream
+release identity. Its `PA_CreateVariable(eVK_Unistring)` creates an initial empty
+string, while `PA_SetStringVariable` shallow-overwrites the descriptor without
+disposing the old allocation. The initial allocation can be lost even when its
+length is zero. Starting Undefined avoids that allocation and retains final
+`PA_ClearVariable` cleanup of the newly assigned owner.
+
+`PA_GetObjectProperty` explicitly requires clearing its returned variable.
+`PA_GetCollectionVariable` extracts its reference: `ob_get_c` transfers that
+existing owner to its caller, who must eventually dispose it. Do not clear the
+successful local alias. `PA_SetStringInArray` disposes the old element and
+shallow-transfers only for Unicode arrays with non-null data, non-null input and
+indexes zero through the inclusive element count; rejected calls retain caller
+ownership. `PA_GetStringInArray` is borrowed. Scalar `PA_SetUnistring` is an
+engine-backed content operation, not that array descriptor transfer.
+
+Run the non-release macOS regression independently:
+
+```sh
+python3 -B -m unittest discover -s .github/tests -p test_ownership.py -v
+```
+
+It compiles actual command/helper sources and the **full unchanged SDK**, with an
+engine-boundary shim, ASan/UBSan, and explicit string/handle/reference accounting.
+No native project build phases, signing, packaging or publication run. LeakSanitizer
+is disabled on macOS; accounting catches lost descriptors under allocated-empty
+and null-empty representations. Cases cover dispatcher output, repeated cleanup,
+independent collection copies, all four string setter overloads, property
+matches/mismatches and successful object/collection owning handoffs, borrowed
+scalar/array copies, array replacement/shrink/clear and rejected type/index/data.
+ASCII, BMP, supplementary pairs and empty fixtures assert exact content and
+lengths; the charset boundary uses byte capacities/returned lengths, excluding
+termination, as documented by this SDK.
+
+Set `METAPHONE_SOURCE_ROOT` to an extracted immutable baseline to run the same
+final harness against original source. Allocated-empty command/output/setter
+cases and property-result leak cases fail on the baseline and pass after the
+fix. Engine callbacks model deep string copies and owning property results;
+the string-valued `PA_GetStringVariable` callback is modeled as borrowed, not a
+claim about non-string conversion results. The actual engine is not bundled.
+This is **not** real-4D execution or Windows certification; engine allocation
+failure behavior, other SDK revisions and prebuilt distributions remain untested.
+
 ## DoubleMetaphone
 
 **DoubleMetaphone ( text ) → Collection**
