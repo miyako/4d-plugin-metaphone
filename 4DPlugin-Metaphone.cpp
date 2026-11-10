@@ -295,7 +295,7 @@ static void push_back(PA_CollectionRef metaphones, const std::string& str)
     // Guarantee a UTF-16 terminator even if the conversion routine writes no terminator.
     buf[char_count - 1] = 0;
 
-    PA_Variable v = PA_CreateVariable(eVK_Unistring);
+    PA_Variable v = PA_CreateVariable(eVK_Undefined);
     PA_Unistring value = PA_CreateUnistring(buf.data());
     PA_SetStringVariable(&v, &value);
     PA_SetCollectionElement(metaphones, PA_GetCollectionLength(metaphones), v);
